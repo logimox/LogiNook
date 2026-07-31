@@ -24,11 +24,11 @@ public final class MusicControlModule: NookModule {
 
     public func makeConfiguration() -> NookConfiguration {
         var configuration = NookConfiguration()
-        configuration.setHome { YouTubeMusicControlsView() }
-        configuration.topBar.leadingTitle = { _ in "Music" }
-        configuration.topBar.leadingIcon = "music.note"
-        // The music search result list needs a substantially wider expanded surface.
-        configuration.expandedWidth = 1040
+        configuration.setHome { LogiNookDashboardView() }
+        configuration.topBar.leadingTitle = { _ in "Dashboard" }
+        configuration.topBar.leadingIcon = "rectangle.split.3x1"
+        // Three side-by-side panels need room for their independent controls.
+        configuration.expandedWidth = 1560
         return configuration
     }
 }
