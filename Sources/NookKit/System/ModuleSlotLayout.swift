@@ -9,12 +9,11 @@ public enum ModuleSlot: String, CaseIterable, Identifiable, Sendable {
 }
 
 public enum LogiNookModule: String, CaseIterable, Identifiable, Sendable {
-    case music, steam, moduleTwo, moduleThree
+    case music, moduleTwo, moduleThree
     public var id: Self { self }
     public var title: String {
         switch self {
         case .music: "Music"
-        case .steam: "Steam"
         case .moduleTwo: "Module 2"
         case .moduleThree: "Module 3"
         }
@@ -25,8 +24,8 @@ public struct ModuleSlotLayout: Equatable, Sendable {
     private var assignments: [ModuleSlot: LogiNookModule]
 
     public static let `default` = ModuleSlotLayout(
-        left: .steam,
-        center: .music,
+        left: .music,
+        center: .moduleTwo,
         right: .moduleThree
     )
 

@@ -6,10 +6,10 @@ import XCTest
 final class ModuleSlotLayoutTests: XCTestCase {
     func testChangingOneSlotKeepsTheOtherTwoAssignments() {
         var layout = ModuleSlotLayout.default
-        layout[.left] = .steam
+        layout[.left] = .moduleTwo
 
-        XCTAssertEqual(layout[.left], .steam)
-        XCTAssertEqual(layout[.center], .music)
+        XCTAssertEqual(layout[.left], .moduleTwo)
+        XCTAssertEqual(layout[.center], .moduleTwo)
         XCTAssertEqual(layout[.right], .moduleThree)
     }
 }
