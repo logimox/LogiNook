@@ -7,7 +7,7 @@ final class WeatherCommandTests: XCTestCase {
     func testWeatherCommandUsesCurlAndASCIIFormat() {
         XCTAssertEqual(
             WeatherCommand.arguments(city: "Stockholm"),
-            ["-fsSL", "https://wttr.in/Stockholm?0"]
+            ["-fsSL", "https://wttr.in/Stockholm?0T"]
         )
     }
 }

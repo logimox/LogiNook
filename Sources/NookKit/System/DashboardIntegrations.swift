@@ -6,7 +6,7 @@ public enum WeatherCommand {
     public static func arguments(city: String) -> [String] {
         let encoded = city.trimmingCharacters(in: .whitespacesAndNewlines)
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? city
-        return ["-fsSL", "https://wttr.in/\(encoded)?0"]
+        return ["-fsSL", "https://wttr.in/\(encoded)?0T"]
     }
 }
 
@@ -33,6 +33,7 @@ public struct WeatherPresentation: Equatable, Sendable {
     public let summary: String
 
     public init(report: String) {
+        let report = report.replacingOccurrences(of: "\u{001B}\\[[0-9;?]*[ -/]*[@-~]", with: "", options: .regularExpression)
         let lower = report.lowercased()
         if lower.contains("thunder") || lower.contains("storm") { condition = .thunder }
         else if lower.contains("snow") || lower.contains("sleet") { condition = .snow }
@@ -42,11 +43,13 @@ public struct WeatherPresentation: Equatable, Sendable {
         else if lower.contains("sun") || lower.contains("clear") { condition = .sunny }
         else { condition = .unknown }
         symbol = condition.symbol
-        temperature = report.split(separator: "\n").first { $0.contains("°C") }.map { line in
-            let values = line.split(separator: " ")
-            guard let index = values.firstIndex(of: "°C"), index > values.startIndex else { return String(line).trimmingCharacters(in: .whitespaces) }
-            return "\(values[values.index(before: index)]) °C"
-        } ?? "—"
+        if let regex = try? NSRegularExpression(pattern: "[+-]?\\d+\\s*°C"),
+           let match = regex.firstMatch(in: report, range: NSRange(report.startIndex..., in: report)),
+           let range = Range(match.range, in: report) {
+            temperature = String(report[range]).replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        } else {
+            temperature = "—"
+        }
         let descriptions = ["Light rain", "Moderate rain", "Heavy rain", "Sunny", "Clear", "Partly cloudy", "Cloudy", "Overcast", "Fog", "Mist", "Snow", "Thunderstorm"]
         summary = descriptions.first { lower.contains($0.lowercased()) } ?? "Weather"
     }
