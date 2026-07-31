@@ -9,6 +9,7 @@ xcuserdata/
 # source of truth; run Scripts/regenerate-xcodeproj.sh after a fresh clone or
 # after editing project.yml.
 Nook.xcodeproj/
+LogiNook.xcodeproj/
 .swiftpm/
 # Library package - resolved pins are local/CI-specific, not committed.
 Package.resolved

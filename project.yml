@@ -11,7 +11,7 @@
 # trampoline so `swift run Nook` and Cmd-R behave identically modulo bundle
 # layout (the SPM build has no `Contents/Info.plist` on disk).
 
-name: Nook
+name: LogiNook
 options:
   bundleIdPrefix: com.example
   createIntermediateGroups: true
@@ -38,8 +38,8 @@ packages:
 targets:
   # Target name is `NookHostApp` to avoid a scheme-name collision with the
   # SPM `Nook` executable product (both would otherwise resolve to the same
-  # `xcodebuild -scheme Nook`). The user-facing bundle is still `Nook.app`
-  # via `PRODUCT_NAME: Nook`.
+  # `xcodebuild -scheme Nook`). The user-facing bundle is `LogiNook.app`
+  # via `PRODUCT_NAME: LogiNook`.
   NookHostApp:
     type: application
     platform: macOS
@@ -55,8 +55,8 @@ targets:
           - "Nook.entitlements"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.nook
-        PRODUCT_NAME: Nook
+        PRODUCT_BUNDLE_IDENTIFIER: com.logimox.loginook
+        PRODUCT_NAME: LogiNook
         INFOPLIST_FILE: App/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         ENABLE_HARDENED_RUNTIME: YES
