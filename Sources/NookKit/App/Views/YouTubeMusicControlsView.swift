@@ -43,13 +43,24 @@ public struct YouTubeMusicControlsView: View {
 
             if !controller.searchResults.isEmpty {
                 List(controller.searchResults) { result in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(result.title).font(.subheadline.weight(.semibold))
-                        if !result.subtitle.isEmpty {
-                            Text(result.subtitle)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                    HStack(spacing: 10) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(result.title).font(.subheadline.weight(.semibold))
+                            if !result.subtitle.isEmpty {
+                                Text(result.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
+                        Spacer()
+                        Button {
+                            controller.play(result, using: provider)
+                        } label: {
+                            Image(systemName: "play.fill")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red)
+                        .accessibilityLabel("Play \(result.title)")
                     }
                     .padding(.vertical, 2)
                 }

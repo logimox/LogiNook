@@ -48,6 +48,22 @@ public struct YouTubeMusicClient: Sendable {
         return request
     }
 
+    public func playRequest(videoID: String) throws -> URLRequest {
+        let url = baseURL.appending(path: "/api/v1/queue")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: [
+            "videoId": videoID,
+            "insertPosition": "INSERT_AFTER_CURRENT_VIDEO"
+        ])
+        return request
+    }
+
+    public func play(videoID: String) async throws {
+        try await send(playRequest(videoID: videoID))
+    }
+
     public func search(_ query: String) async throws -> [MusicSearchResult] {
         let request = try searchRequest(query: query)
         let (data, response) = try await URLSession.shared.data(for: request)

@@ -96,6 +96,21 @@ public final class MusicController: ObservableObject {
         }
     }
 
+    public func play(_ result: MusicSearchResult, using provider: MusicProvider) {
+        guard provider == .youtubeMusic else {
+            statusMessage = "Play a result from \(provider.title) in that app"
+            return
+        }
+        Task { [weak self] in
+            do {
+                try await self?.youtubeMusic.play(videoID: result.id)
+                self?.statusMessage = "Queued \(result.title) in YouTube Music"
+            } catch {
+                self?.statusMessage = "Could not play the selected YouTube Music result"
+            }
+        }
+    }
+
     public func search(_ query: String, using provider: MusicProvider) {
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !term.isEmpty else {
