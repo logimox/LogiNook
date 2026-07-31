@@ -192,7 +192,7 @@ private struct SteamCommandView: View {
                         Text("App ID \(game.id)").font(.caption2).foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button("Update") { model.pendingAction = .update(game) }
+                    Button("Update") { model.run(.update(game)) }
                 }
             }
             .listStyle(.plain)

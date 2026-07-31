@@ -53,9 +53,9 @@ public struct SteamGame: Identifiable, Equatable, Sendable {
         self.stateFlags = stateFlags
     }
 
-    /// Steam's `k_EAppStateUpdateRequired` bit (0x400) marks installed titles
-    /// with a pending update. Other flags may be present simultaneously.
-    public var needsUpdate: Bool { stateFlags & 0x400 != 0 }
+    /// Steam's `k_EAppStateUpdateRequired` bit (0x2) marks titles with a
+    /// pending update. Other flags may be present simultaneously.
+    public var needsUpdate: Bool { stateFlags & 0x2 != 0 }
 }
 
 public enum SteamManifestParser {

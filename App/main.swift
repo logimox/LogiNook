@@ -33,6 +33,9 @@ private func placeholderConfiguration(title: String, icon: String) -> NookConfig
 }
 
 var host = NookHostConfiguration()
+// The dashboard is an interactive workspace: it must not compact while the
+// pointer moves across its three panels, lists, menus, or Steam confirmation.
+host.chromeBehavior = NookChromeBehavior(hoverBehavior: [.keepVisible])
 host.register(MusicControlModule.moduleDescriptor) { context in
     MusicControlModule(context: context)
 }

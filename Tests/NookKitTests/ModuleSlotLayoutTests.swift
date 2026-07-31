@@ -33,7 +33,7 @@ final class SteamManifestTests: XCTestCase {
 
     func testFiltersOnlyGamesWithSteamUpdateRequiredFlag() {
         let ready = SteamGame(id: "1", name: "Ready", buildID: "1", stateFlags: 4)
-        let update = SteamGame(id: "2", name: "Update", buildID: "2", stateFlags: 1030)
+        let update = SteamGame(id: "2", name: "Update", buildID: "2", stateFlags: 6)
 
         XCTAssertEqual(SteamLibrary.updateableGames(from: [ready, update]), [update])
     }
