@@ -24,8 +24,3 @@ public enum SteamClient {
         installURL(appID: appID)
     }
 }
-
-public extension ModuleSlot {
-    /// The compact LogiNook dashboard shows two panels side-by-side.
-    static let visibleCases: [ModuleSlot] = [.left, .right]
-}

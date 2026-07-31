@@ -4,7 +4,13 @@ import XCTest
 @testable import NookKit
 
 final class TwoPanelDashboardTests: XCTestCase {
-    func testDashboardUsesTwoVisibleSlotsByDefault() {
-        XCTAssertEqual(ModuleSlot.visibleCases, [.left, .right])
+    func testDashboardUsesFourVisibleSlots() {
+        XCTAssertEqual(ModuleSlot.visibleCases, [.topLeft, .topRight, .bottomLeft, .bottomRight])
+    }
+}
+
+final class SteamUpdateOptionsTests: XCTestCase {
+    func testSteamClientInstallURLIsWellFormed() {
+        XCTAssertEqual(SteamClient.installURL(appID: "7").absoluteString, "steam://install/7")
     }
 }

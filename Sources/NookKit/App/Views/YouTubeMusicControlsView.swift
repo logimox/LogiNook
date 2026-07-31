@@ -7,10 +7,12 @@ import SwiftUI
 /// YouTube Music requires its API Server plugin to be enabled on port 26538.
 public struct YouTubeMusicControlsView: View {
     @StateObject private var controller = MusicController()
-    @State private var provider: MusicProvider = .youtubeMusic
+    @State private var provider: MusicProvider
     @State private var query = ""
 
-    public init() {}
+    public init(provider: MusicProvider = .youtubeMusic) {
+        _provider = State(initialValue: provider)
+    }
 
     public var body: some View {
         VStack(spacing: 14) {
@@ -100,7 +102,7 @@ public struct YouTubeMusicControlsView: View {
                 .font(prominent ? .title2 : .body)
         }
         .buttonStyle(.borderedProminent)
-        .tint(provider == .youtubeMusic ? .red : .accentColor)
+        .tint(provider.buttonColorName == "green" ? .green : .red)
         .accessibilityLabel(label)
     }
 }

@@ -37,6 +37,10 @@ public enum MusicProvider: String, CaseIterable, Identifiable, Sendable {
     }
 
     public var supportedCommands: [MusicCommand] { [.previous, .togglePlayback, .next] }
+
+    public var buttonColorName: String {
+        self == .spotify ? "green" : "red"
+    }
 }
 
 public enum MusicCommand: Sendable, Equatable {
