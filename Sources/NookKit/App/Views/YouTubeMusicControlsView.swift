@@ -54,13 +54,21 @@ public struct YouTubeMusicControlsView: View {
                         }
                         Spacer()
                         Button {
-                            controller.play(result, using: provider)
+                            controller.queue(result, using: provider)
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        .buttonStyle(.bordered)
+                        .accessibilityLabel("Add \(result.title) to queue")
+
+                        Button {
+                            controller.playNow(result, using: provider)
                         } label: {
                             Image(systemName: "play.fill")
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.red)
-                        .accessibilityLabel("Play \(result.title)")
+                        .accessibilityLabel("Play \(result.title) next")
                     }
                     .padding(.vertical, 2)
                 }

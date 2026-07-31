@@ -48,20 +48,35 @@ public struct YouTubeMusicClient: Sendable {
         return request
     }
 
-    public func playRequest(videoID: String) throws -> URLRequest {
+    public func queueRequest(videoID: String) throws -> URLRequest {
+        try queueRequest(videoID: videoID, insertPosition: "INSERT_AT_END")
+    }
+
+    public func playNowRequest(videoID: String) throws -> URLRequest {
+        try queueRequest(videoID: videoID, insertPosition: "INSERT_AFTER_CURRENT_VIDEO")
+    }
+
+    public func queue(videoID: String) async throws {
+        try await send(queueRequest(videoID: videoID))
+    }
+
+    /// Inserts the selected result immediately after the current song, then advances
+    /// playback so the selected result starts now.
+    public func playNow(videoID: String) async throws {
+        try await send(playNowRequest(videoID: videoID))
+        try await send(request(for: .next))
+    }
+
+    private func queueRequest(videoID: String, insertPosition: String) throws -> URLRequest {
         let url = baseURL.appending(path: "/api/v1/queue")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: [
             "videoId": videoID,
-            "insertPosition": "INSERT_AFTER_CURRENT_VIDEO"
+            "insertPosition": insertPosition
         ])
         return request
-    }
-
-    public func play(videoID: String) async throws {
-        try await send(playRequest(videoID: videoID))
     }
 
     public func search(_ query: String) async throws -> [MusicSearchResult] {

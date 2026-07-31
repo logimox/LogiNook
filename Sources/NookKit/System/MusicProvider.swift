@@ -96,15 +96,30 @@ public final class MusicController: ObservableObject {
         }
     }
 
-    public func play(_ result: MusicSearchResult, using provider: MusicProvider) {
+    public func queue(_ result: MusicSearchResult, using provider: MusicProvider) {
+        guard provider == .youtubeMusic else {
+            statusMessage = "Queue a result from \(provider.title) in that app"
+            return
+        }
+        Task { [weak self] in
+            do {
+                try await self?.youtubeMusic.queue(videoID: result.id)
+                self?.statusMessage = "Added \(result.title) to the YouTube Music queue"
+            } catch {
+                self?.statusMessage = "Could not add the selected YouTube Music result"
+            }
+        }
+    }
+
+    public func playNow(_ result: MusicSearchResult, using provider: MusicProvider) {
         guard provider == .youtubeMusic else {
             statusMessage = "Play a result from \(provider.title) in that app"
             return
         }
         Task { [weak self] in
             do {
-                try await self?.youtubeMusic.play(videoID: result.id)
-                self?.statusMessage = "Queued \(result.title) in YouTube Music"
+                try await self?.youtubeMusic.playNow(videoID: result.id)
+                self?.statusMessage = "Playing \(result.title) next in YouTube Music"
             } catch {
                 self?.statusMessage = "Could not play the selected YouTube Music result"
             }
