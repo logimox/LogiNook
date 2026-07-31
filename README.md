@@ -1,17 +1,20 @@
-# OpenNook
+# LogiNook
 
-[![CI](https://github.com/athledev-labs/opennook/actions/workflows/ci.yml/badge.svg)](https://github.com/athledev-labs/opennook/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![License: MIT (NookSurface)](https://img.shields.io/badge/NookSurface-MIT-blue.svg)](LICENSE-MIT-NOOKSURFACE)
 [![Swift 5.9+](https://img.shields.io/badge/swift-5.9%2B-orange.svg)](https://swift.org)
 [![Platform: macOS 15+](https://img.shields.io/badge/platform-macOS%2015%2B-lightgrey.svg)](#requirements)
-[![Swift Package Index](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fathledev-labs%2Fopennook%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/athledev-labs/opennook)
-[![Swift Package Index](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fathledev-labs%2Fopennook%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/athledev-labs/opennook)
 
-**An open-source framework for building macOS notch apps.**
+**A multi-module macOS notch app, based on OpenNook.**
 
-**Website:** [opennook.dev](https://opennook.dev) ·
-**Docs:** [Getting started](https://opennook.dev/start/introduction/)
+## Attribution
+
+LogiNook is a fork of [OpenNook](https://github.com/athledev-labs/opennook), created by [Glendon Chin](https://github.com/athledev-labs). Its `NookSurface` foundation is a trimmed, renamed fork of [DynamicNotchKit](https://github.com/MrKai77/DynamicNotchKit), created by [MrKai77](https://github.com/MrKai77).
+
+LogiNook adds a switchable music-controls module for Spotify, Apple Music, and YouTube Music, plus two additional module slots. Original copyright and license notices are retained in this repository.
+
+**OpenNook website:** [opennook.dev](https://opennook.dev) ·
+**OpenNook docs:** [Getting started](https://opennook.dev/start/introduction/)
 
 OpenNook gives you the hard part for free: a polished window that lives in the
 menu-bar notch, expands and collapses on hover, paints a proper frosted
