@@ -31,7 +31,6 @@ public struct LogiNookDashboardView: View {
 
             HStack(alignment: .top, spacing: 10) {
                 PanelContainer(slot: .left, module: layout[.left])
-                PanelContainer(slot: .center, module: layout[.center])
                 PanelContainer(slot: .right, module: layout[.right])
             }
         }
@@ -45,7 +44,7 @@ private struct PanelLayoutSettings: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ForEach(ModuleSlot.allCases) { slot in
+            ForEach(ModuleSlot.visibleCases) { slot in
                 Picker(slot.title, selection: Binding(
                     get: { layout[slot] },
                     set: { layout[slot] = $0 }
@@ -149,22 +148,11 @@ private final class SteamCommandModel: ObservableObject {
         case let .update(game): id = game.id
         case let .install(appID): id = appID
         }
-        status = "Running SteamCMD for App ID \(id)…"
-        Task.detached { [weak self] in
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/steamcmd")
-            process.arguments = ["+login", "anonymous", "+app_update", id, "+quit"]
-            do {
-                try process.run()
-                process.waitUntilExit()
-                await MainActor.run {
-                    self?.status = process.terminationStatus == 0 ? "SteamCMD completed for App ID \(id)" : "SteamCMD failed for App ID \(id)"
-                    self?.refresh()
-                }
-            } catch {
-                await MainActor.run { self?.status = "Could not start SteamCMD: \(error.localizedDescription)" }
-            }
-        }
+        // Use the signed-in Steam client instead of anonymous SteamCMD. This keeps
+        // ownership, update state, downloads, and the client library in one place.
+        let url = SteamClient.installURL(appID: id)
+        NSWorkspace.shared.open(url)
+        status = "Sent App ID \(id) to the Steam client"
     }
 }
 
@@ -176,7 +164,7 @@ private struct SteamCommandView: View {
             HStack {
                 Button("Refresh") { model.refresh() }
                 Spacer()
-                Text("\(model.games.count) games").font(.caption).foregroundStyle(.secondary)
+                Text("\(model.games.count) updates").font(.caption).foregroundStyle(.secondary)
             }
             HStack(spacing: 6) {
                 TextField("Game or App ID", text: $model.appID)

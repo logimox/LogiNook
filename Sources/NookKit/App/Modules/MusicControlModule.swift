@@ -27,8 +27,8 @@ public final class MusicControlModule: NookModule {
         configuration.setHome { LogiNookDashboardView() }
         configuration.topBar.leadingTitle = { _ in "Dashboard" }
         configuration.topBar.leadingIcon = "rectangle.split.3x1"
-        // Three side-by-side panels need room for their independent controls.
-        configuration.expandedWidth = 1560
+        // Two side-by-side panels keep the dashboard compact.
+        configuration.expandedWidth = 1040
         return configuration
     }
 }
