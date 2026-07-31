@@ -36,8 +36,7 @@ public struct YouTubeMusicClient: Sendable {
     }
 
     public func send(_ command: YouTubeMusicCommand) async throws {
-        let request = try request(for: command)
-        try await send(request)
+        try await send(request(for: command))
     }
 
     public func searchRequest(query: String) throws -> URLRequest {
@@ -49,8 +48,18 @@ public struct YouTubeMusicClient: Sendable {
         return request
     }
 
-    public func search(_ query: String) async throws {
-        try await send(searchRequest(query: query))
+    public func search(_ query: String) async throws -> [MusicSearchResult] {
+        let request = try searchRequest(query: query)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        return try Self.decodeSearchResults(from: data)
+    }
+
+    public static func decodeSearchResults(from data: Data) throws -> [MusicSearchResult] {
+        let response = try JSONDecoder().decode(YouTubeMusicSearchResponse.self, from: data)
+        return response.collectResults()
     }
 
     private func send(_ request: URLRequest) async throws {
@@ -58,6 +67,88 @@ public struct YouTubeMusicClient: Sendable {
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw URLError(.badServerResponse)
         }
+    }
+}
+
+private struct YouTubeMusicSearchResponse: Decodable {
+    let contents: AnyDecodable?
+
+    func collectResults() -> [MusicSearchResult] {
+        var results: [MusicSearchResult] = []
+        collect(from: contents, into: &results)
+        var seen = Set<String>()
+        return results.filter { seen.insert($0.id).inserted }
+    }
+
+    private func collect(from value: AnyDecodable?, into results: inout [MusicSearchResult]) {
+        guard let value else { return }
+        switch value.value {
+        case let dictionary as [String: AnyDecodable]:
+            if let item = dictionary["musicResponsiveListItemRenderer"],
+               let result = MusicSearchResult(item: item) {
+                results.append(result)
+            }
+            for child in dictionary.values { collect(from: child, into: &results) }
+        case let array as [AnyDecodable]:
+            for child in array { collect(from: child, into: &results) }
+        default:
+            break
+        }
+    }
+}
+
+private extension MusicSearchResult {
+    init?(item: AnyDecodable) {
+        guard let dictionary = item.dictionary,
+              let columns = dictionary["flexColumns"]?.array else { return nil }
+        let title = columns
+            .first?
+            .dictionary?["musicResponsiveListItemFlexColumnRenderer"]?
+            .dictionary?["text"]?
+            .dictionary?["runs"]?
+            .array?
+            .compactMap { $0.dictionary?["text"]?.string }
+            .joined()
+        guard let title, !title.isEmpty else { return nil }
+
+        let id = dictionary["overlay"]?
+            .dictionary?["musicItemThumbnailOverlayRenderer"]?
+            .dictionary?["content"]?
+            .dictionary?["musicPlayButtonRenderer"]?
+            .dictionary?["playNavigationEndpoint"]?
+            .dictionary?["watchEndpoint"]?
+            .dictionary?["videoId"]?
+            .string
+            ?? UUID().uuidString
+
+        let subtitles = columns.dropFirst().compactMap { column in
+            column.dictionary?["musicResponsiveListItemFlexColumnRenderer"]?
+                .dictionary?["text"]?
+                .dictionary?["runs"]?
+                .array?
+                .compactMap { $0.dictionary?["text"]?.string }
+                .joined()
+        }
+        self.init(id: id, title: title, subtitle: subtitles.joined(separator: " · "))
+    }
+}
+
+private struct AnyDecodable: Decodable {
+    let value: Any
+
+    var dictionary: [String: AnyDecodable]? { value as? [String: AnyDecodable] }
+    var array: [AnyDecodable]? { value as? [AnyDecodable] }
+    var string: String? { value as? String }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() { value = NSNull() }
+        else if let dictionary = try? container.decode([String: AnyDecodable].self) { value = dictionary }
+        else if let array = try? container.decode([AnyDecodable].self) { value = array }
+        else if let string = try? container.decode(String.self) { value = string }
+        else if let number = try? container.decode(Double.self) { value = number }
+        else if let boolean = try? container.decode(Bool.self) { value = boolean }
+        else { throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unsupported JSON value") }
     }
 }
 

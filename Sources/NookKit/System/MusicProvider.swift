@@ -45,11 +45,25 @@ public enum MusicCommand: Sendable, Equatable {
     case next
 }
 
+/// A searchable track displayed inside the music module.
+public struct MusicSearchResult: Identifiable, Equatable, Sendable {
+    public let id: String
+    public let title: String
+    public let subtitle: String
+
+    public init(id: String, title: String, subtitle: String) {
+        self.id = id
+        self.title = title
+        self.subtitle = subtitle
+    }
+}
+
 /// Controls installed desktop players through their scripting interfaces or the
 /// YouTube Music desktop app's local API Server plugin.
 @MainActor
 public final class MusicController: ObservableObject {
     @Published public private(set) var statusMessage = "Select a music service"
+    @Published public private(set) var searchResults: [MusicSearchResult] = []
 
     private let youtubeMusic = YouTubeMusicClient()
 
@@ -89,12 +103,14 @@ public final class MusicController: ObservableObject {
             return
         }
 
+        searchResults = []
         switch provider {
         case .youtubeMusic:
             Task { [weak self] in
                 do {
-                    try await self?.youtubeMusic.search(term)
-                    self?.statusMessage = "Searching YouTube Music"
+                    let results = try await self?.youtubeMusic.search(term) ?? []
+                    self?.searchResults = results
+                    self?.statusMessage = results.isEmpty ? "No YouTube Music results" : "\(results.count) YouTube Music results"
                 } catch {
                     self?.statusMessage = "Enable YouTube Music’s API Server plugin"
                 }

@@ -27,6 +27,8 @@ public final class MusicControlModule: NookModule {
         configuration.setHome { YouTubeMusicControlsView() }
         configuration.topBar.leadingTitle = { _ in "Music" }
         configuration.topBar.leadingIcon = "music.note"
+        // The music search result list needs a substantially wider expanded surface.
+        configuration.expandedWidth = 1040
         return configuration
     }
 }

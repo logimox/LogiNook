@@ -41,6 +41,22 @@ public struct YouTubeMusicControlsView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
+            if !controller.searchResults.isEmpty {
+                List(controller.searchResults) { result in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(result.title).font(.subheadline.weight(.semibold))
+                        if !result.subtitle.isEmpty {
+                            Text(result.subtitle)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+                .listStyle(.plain)
+                .frame(minHeight: 180, maxHeight: 320)
+            }
+
             if provider == .youtubeMusic {
                 Text("Enable YouTube Music’s API Server plugin (port 26538).")
                     .font(.caption2)
