@@ -12,4 +12,4 @@
 
 import NookApp
 
-NookApp.main()
+NookApp.main { YouTubeMusicControlsView() }
